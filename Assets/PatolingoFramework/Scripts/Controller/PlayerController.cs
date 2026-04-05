@@ -6,6 +6,11 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
     [SerializeField]
     private Actor startWithActor;
 
+    [Space]
+
+    [Header("InteractionSystem")]
+    private InteractionComponent interactionComponent;
+
     private CameraHandler _cameraHandler;
 
     private Vector3 moveInput;
@@ -18,8 +23,8 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
         InputManager.Instance.SubscribeToGameplay(this);
 
         InitializeCamera();
-
         InitializeActor();
+        InitializeInteractComponent();
     }
 
     private void Update()
@@ -53,6 +58,22 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
         _cameraHandler.viewOffset = new Vector3(0f, .5f, 0f);
 
         _cameraHandler.bRotateParentYAxis = true;
+    }
+    private void InitializeInteractComponent()
+    {
+        interactionComponent = controllingActor.GetComponent<InteractionComponent>();
+
+        if (interactionComponent != null)
+        {
+            interactionComponent.whereToGetOrientation += () =>
+            {
+                return _cameraHandler.controllingCamera.transform.forward;
+            };
+            interactionComponent.whereToGetOrigin += () =>
+            {
+                return _cameraHandler.transform.position;
+            };
+        }
     }
     #endregion
 
@@ -97,6 +118,8 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
 
     public void OnInteract(InputAction.CallbackContext context)
     {
+        if(context.performed)
+            interactionComponent.TriggerInteracting();
     }
 
     public void OnJump(InputAction.CallbackContext context)

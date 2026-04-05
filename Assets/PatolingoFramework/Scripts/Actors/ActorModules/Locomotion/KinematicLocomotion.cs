@@ -130,8 +130,6 @@ public class KinematicLocomotion : LocomotionModule
             targetSpeed = stairsSpeed;
         }
 
-        Debug.Log($"Target Speed: {targetSpeed}");
-
         return targetSpeed;
     }
 }

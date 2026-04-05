@@ -12,6 +12,7 @@ public class CameraHandler : MonoBehaviour, ICamera
     public Vector3 viewOffset;
 
     private Camera m_Camera;
+    public Camera controllingCamera => m_Camera;
 
     private float _pitch;
     private float _yaw;
