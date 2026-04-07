@@ -8,6 +8,13 @@ public class InteractionComponent : MonoBehaviour
 
     public event Func<Vector3> whereToGetOrientation;
     public event Func<Vector3> whereToGetOrigin;
+
+    private bool isHittingInteractable;
+    private RaycastHit hit;
+
+    [Space]
+
+    [SerializeField] private InteractionUI ui;
     
     public Vector3 Orientation => GetOrientation();
     public Vector3 Origin => GetOrigin();
@@ -31,13 +38,16 @@ public class InteractionComponent : MonoBehaviour
         return whereToGetOrigin();
     }
 
+    private void Update()
+    {
+        isHittingInteractable = Physics.Raycast(Origin, Orientation.normalized, out hit, interactableRange, interactableLayer);
+
+        ui?.SetCanInteract(isHittingInteractable);
+    }
+
     public void TriggerInteracting()
     {
-        Debug.Log("Triggered Interaction");
-
-        bool hitSomething = Physics.Raycast(Origin, Orientation.normalized, out RaycastHit hit, interactableRange, interactableLayer);
-        
-        if(hitSomething)
+        if(isHittingInteractable)
         {
             IInteractable interactable = hit.collider.gameObject.GetComponent<IInteractable>();
 

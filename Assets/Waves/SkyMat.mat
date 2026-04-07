@@ -192,15 +192,18 @@ Material:
     - _StarTwinkleSpeed: 0
     - _Start_Edge: -3.22
     - _SunDisk: 2
+    - _SunGlowIntensity: 0.7
+    - _SunGlowSize: 0.036
     - _SunIntensity: 5
     - _SunOrbitPitch: 0
-    - _SunOrbitYaw: 52
-    - _SunSize: 0.06
+    - _SunOrbitYaw: 0
+    - _SunSize: 0.058
     - _SunSizeConvergence: 5
-    - _SunsetIntensity: 0.164
-    - _SunsetRange: 0.036
+    - _SunSkyTint: 0
+    - _SunsetIntensity: 1.339
+    - _SunsetRange: 1
     - _Surface: 0
-    - _TimeOfDay: 0.843
+    - _TimeOfDay: 0.285
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
@@ -231,6 +234,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Star_Colors: {r: 1, g: 1, b: 1, a: 1}
     - _SunColor: {r: 0.9528302, g: 0.8938783, b: 0.36405307, a: 1}
+    - _SunGlowColor: {r: 1, g: 0.85, b: 0.39999998, a: 1}
     - _SunsetColor: {r: 1, g: 0.6642535, b: 0.495283, a: 1}
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Top_Color: {r: 0, g: 0, b: 0, a: 1}

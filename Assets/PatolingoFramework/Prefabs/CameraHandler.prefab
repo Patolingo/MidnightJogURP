@@ -44,8 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1231f94749e38f745a1c5e1dcc9d1242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraHandler
+  testObjcet: {fileID: 0}
   _sensitivity: 0.25
   _startCursorLockMode: 1
+  _pitchLimit: 90
+  bHeadbobEnabled: 1
+  headbobInterval: 10
+  headbobAmplitude: 0.05
   bRotateParentYAxis: 0
   followTransform: {fileID: 0}
   viewOffset: {x: 0, y: 0, z: 0}
+  bInputEnabled: 1

@@ -30,6 +30,7 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
     private void Update()
     {
         UpdateLocomotion();
+        UpdateCamera();
     }
     #endregion
 
@@ -45,6 +46,8 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
             {
                 PossessActor(Instantiate(startWithActor, transform.position, Quaternion.identity));
             }
+
+        controllingActor._bindedCamera = _cameraHandler;
     }
     private void InitializeCamera()
     {
@@ -58,6 +61,9 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
         _cameraHandler.viewOffset = new Vector3(0f, .5f, 0f);
 
         _cameraHandler.bRotateParentYAxis = true;
+
+        _cameraHandler.isHeadbobTickEnabled += () => (controllingActor.IsMoving() && controllingActor.IsGrounded());
+        _cameraHandler.headbobIntervalMultiplier += () => controllingActor.IsSprinting() ? 2f : 1f;
     }
     private void InitializeInteractComponent()
     {
@@ -106,6 +112,15 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
         controllingActor?.LocomotionModule?.SetMovementInput(new LocomotionInput(moveInput, sprintInput));
     }
 
+    private void UpdateCamera()
+    {
+        controllingActor?.LocomotionModule?.SetOrientation(new OrientationContext(controllingActor.transform));
+    }
+
+
+    
+
+
     #region InputSystem_Actions.IPlayerActions
 
     public void OnAttack(InputAction.CallbackContext context)
@@ -134,7 +149,7 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
         _cameraHandler.AddPitchInput(-pitch);
         _cameraHandler.AddYawInput(yaw);
 
-        controllingActor?.LocomotionModule?.SetOrientation(new OrientationContext(controllingActor.transform));
+        
     }
 
     public void OnMove(InputAction.CallbackContext context)
