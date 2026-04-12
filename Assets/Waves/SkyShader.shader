@@ -28,6 +28,12 @@ Shader "Custom/PixelatedSkybox"
         [Header(Sun Orbit  2 Axis)]
         _SunOrbitPitch ("Sun Orbit Pitch (tilt)", Range(-90, 90)) = 0
         _SunOrbitYaw ("Sun Orbit Yaw (rotation)", Range(-180, 180)) = 0
+
+        [Header(Sun Glow)]
+        _SunGlowColor ("Sun Glow Color", Color) = (1.0, 0.85, 0.4, 1)
+        _SunGlowIntensity ("Sun Glow Intensity", Range(0.0, 5.0)) = 2.0
+        _SunGlowSize ("Sun Glow Size", Range(0.01, 1.0)) = 0.35
+        _SunSkyTint ("Sun Sky Tint Strength", Range(0.0, 1.0)) = 0.15
         
         [Header(Moon)]
         _MoonTex ("Moon Texture", 2D) = "white" {}
@@ -111,6 +117,11 @@ Shader "Custom/PixelatedSkybox"
             float _SunOrbitPitch;
             float _SunOrbitYaw;
             
+            float4 _SunGlowColor;
+            float _SunGlowIntensity;
+            float _SunGlowSize;
+            float _SunSkyTint;
+
             TEXTURE2D(_MoonTex);
             SAMPLER(sampler_MoonTex);
             float _MoonSize;
@@ -290,6 +301,20 @@ Shader "Custom/PixelatedSkybox"
                 float sunInfluence = saturate(dot(viewFlat, sunFlat) * 0.5 + 0.5);
                 float sunsetMask = horizonMask * sunsetFactor * sunInfluence * _SunsetIntensity;
                 skyColor = lerp(skyColor, _SunsetColor.rgb, saturate(sunsetMask * _SunsetRange * 3.0));
+
+                
+                // ======== SUN GLOW & SKY TINT ========
+                if (dayFactor > 0.01 && sunDir.y > -0.1)
+                {
+                    float sunProximity = saturate(dot(normPixDir, sunDir));
+                    float sunUp = saturate(sunDir.y);
+                    float sunVisBase = dayFactor * saturate(sunDir.y * 3.0 + 0.5);
+                    // Halo radial ao redor do disco solar
+                    float glowFalloff = pow(sunProximity, 1.0 / max(_SunGlowSize, 0.001));
+                    skyColor += _SunGlowColor.rgb * glowFalloff * _SunGlowIntensity * sunVisBase;
+                    // Tint global do céu pela luz solar (como moonSkyTint)
+                    skyColor = lerp(skyColor, skyColor + _SunGlowColor.rgb * 0.1, _SunSkyTint * dayFactor * sunUp);
+                }
                 
                 // ======== MOON GLOW & SKY TINT ========
                 if (nightAlpha > 0.01 && moonDir.y > -0.1)

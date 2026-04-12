@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class ActorController : MonoBehaviour, IActorController, IDisposable
+public abstract class ActorController : BlockableMonoBehaviour, IActorController, IDisposable
 {
     public Actor controllingActor { get; set; }
 

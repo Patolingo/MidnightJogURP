@@ -130,8 +130,20 @@ public class KinematicLocomotion : LocomotionModule
             targetSpeed = stairsSpeed;
         }
 
-        Debug.Log($"Target Speed: {targetSpeed}");
-
         return targetSpeed;
     }
+
+    public override bool IsMoving()
+    {
+        Vector3 speed = new Vector3(_controller.velocity.x, 0f, _controller.velocity.z);
+
+        return speed.magnitude > 0;
+    }
+
+    public override bool IsGrounded()
+    {
+        return _controller.isGrounded;
+    }
+
+
 }

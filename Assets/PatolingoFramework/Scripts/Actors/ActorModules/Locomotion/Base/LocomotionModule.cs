@@ -22,10 +22,18 @@ public abstract class LocomotionModule : BlockableMonoBehaviour, ILocomotion, IT
 
     protected Vector3 lastMovementDirection;
 
+    public bool bInputEnabled = true;
+
     protected OrientationContext _orientationContext = OrientationContext.Identity;
 
     public virtual void SetMovementInput(LocomotionInput input)
     {
+        if(bInputEnabled == false)
+        {
+            lastMovementDirection = Vector3.zero;
+            MoveDirection = Vector3.zero;
+            return;
+        }
         Vector3 direction = input.MoveDirection;
         _isSprinting = input.isSprinting;
 
@@ -70,6 +78,23 @@ public abstract class LocomotionModule : BlockableMonoBehaviour, ILocomotion, IT
             baseSpeed *= sprintMultiplier;
         }
         return baseSpeed;
+    }
+
+    public virtual bool IsMoving()
+    {
+        Vector3 speed = new Vector3(Velocity.x, 0f, Velocity.z);
+
+        return speed.magnitude > 0;
+    }
+    
+    public virtual bool IsGrounded()
+    {
+        return true;
+    }
+
+    public virtual bool IsSprinting()
+    {
+        return _isSprinting;
     }
 }
 

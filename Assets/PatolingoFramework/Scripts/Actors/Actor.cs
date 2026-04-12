@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,6 +18,8 @@ public class Actor : BlockableMonoBehaviour
     private HashSet<ILateTick> _lateTickModules = new HashSet<ILateTick>();
 
     private ActorController _controller;
+
+    public CameraHandler _bindedCamera;
 
     private void Awake()
     {
@@ -143,5 +146,62 @@ public class Actor : BlockableMonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Utilities
+
+    public virtual void LookAtObject(GameObject go)
+    {
+        LookAtObject(go, 3f);
+    }
+    public virtual void LookAtObject(GameObject go, float lookSpeed)
+    {
+        if (_bindedCamera == null) return;
+
+        StartCoroutine(ELookAtObject(go, lookSpeed));
+    }
+
+    public virtual bool IsMoving()
+    {
+        if(locomotionModule != null)
+        {
+            return locomotionModule.IsMoving();
+        }
+
+        return false;
+    }
+    public virtual bool IsGrounded()
+    {
+        if(locomotionModule != null) return locomotionModule.IsGrounded();
+
+        return true;
+    }
+    public virtual bool IsSprinting()
+    {
+        if (locomotionModule != null) return locomotionModule.IsSprinting();
+
+        return false;
+    }
+
+
+    private IEnumerator ELookAtObject(GameObject go, float lookSpeed)
+    {
+        bool lookingToTarget = false;
+
+        _bindedCamera.bInputEnabled = false;
+        locomotionModule.bInputEnabled = false;
+
+        _bindedCamera.LookAtObject(go, lookSpeed, () => lookingToTarget = true);
+
+        while (lookingToTarget == false)
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        _bindedCamera.bInputEnabled = true;
+        locomotionModule.bInputEnabled = true;
+    }
     #endregion
 }

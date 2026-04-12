@@ -6,25 +6,39 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
     [SerializeField]
     private Actor startWithActor;
 
+    [Space]
+
+    [Header("InteractionSystem")]
+    private InteractionComponent interactionComponent;
+
     private CameraHandler _cameraHandler;
 
     private Vector3 moveInput;
     private bool sprintInput;
 
+    public static PlayerController instance;
+
 
     #region Unity Methods
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         InputManager.Instance.SubscribeToGameplay(this);
 
         InitializeCamera();
-
         InitializeActor();
+        InitializeInteractComponent();
     }
 
     private void Update()
     {
         UpdateLocomotion();
+        UpdateCamera();
     }
     #endregion
 
@@ -40,6 +54,8 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
             {
                 PossessActor(Instantiate(startWithActor, transform.position, Quaternion.identity));
             }
+
+        controllingActor._bindedCamera = _cameraHandler;
     }
     private void InitializeCamera()
     {
@@ -53,6 +69,25 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
         _cameraHandler.viewOffset = new Vector3(0f, .5f, 0f);
 
         _cameraHandler.bRotateParentYAxis = true;
+
+        _cameraHandler.isHeadbobTickEnabled += () => (controllingActor.IsMoving() && controllingActor.IsGrounded());
+        _cameraHandler.headbobIntervalMultiplier += () => controllingActor.IsSprinting() ? 2f : 1f;
+    }
+    private void InitializeInteractComponent()
+    {
+        interactionComponent = controllingActor.GetComponent<InteractionComponent>();
+
+        if (interactionComponent != null)
+        {
+            interactionComponent.whereToGetOrientation += () =>
+            {
+                return _cameraHandler.controllingCamera.transform.forward;
+            };
+            interactionComponent.whereToGetOrigin += () =>
+            {
+                return _cameraHandler.transform.position;
+            };
+        }
     }
     #endregion
 
@@ -83,7 +118,21 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
     private void UpdateLocomotion()
     {
         controllingActor?.LocomotionModule?.SetMovementInput(new LocomotionInput(moveInput, sprintInput));
+
     }
+
+    private void UpdateCamera()
+    {
+        controllingActor?.LocomotionModule?.SetOrientation(new OrientationContext(controllingActor.transform));
+    }
+
+
+    public void ChangeCursorVisible(bool visible)
+    {
+        Cursor.lockState = visible ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = visible;
+    }
+
 
     #region InputSystem_Actions.IPlayerActions
 
@@ -97,6 +146,10 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
 
     public void OnInteract(InputAction.CallbackContext context)
     {
+        if (isBlocked) return;
+
+        if (context.performed)
+            interactionComponent.TriggerInteracting();
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -105,17 +158,25 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
 
     public void OnLook(InputAction.CallbackContext context)
     {
+        if (isBlocked) return;
+
         float pitch = context.ReadValue<Vector2>().y;
         float yaw = context.ReadValue<Vector2>().x;
 
         _cameraHandler.AddPitchInput(-pitch);
         _cameraHandler.AddYawInput(yaw);
 
-        controllingActor?.LocomotionModule?.SetOrientation(new OrientationContext(controllingActor.transform));
+        
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (isBlocked)
+        {
+            moveInput = Vector3.zero;
+            return;
+        }
+
         Vector2 inputDir = context.ReadValue<Vector2>();
         moveInput = new Vector3(inputDir.x, 0f, inputDir.y);
     }
@@ -130,7 +191,18 @@ public class PlayerController : ActorController, InputSystem_Actions.IPlayerActi
 
     public void OnSprint(InputAction.CallbackContext context)
     {
+        if (isBlocked)
+        {
+            sprintInput = false;
+            return;
+        }
         sprintInput = context.ReadValueAsButton();
+    }
+
+    public void OnSkipDialogue(InputAction.CallbackContext context)
+    {
+        if (DialogueManager.InstanceExists && context.started)
+            DialogueManager.Instance.DialogueInputTrigger();
     }
 
     #endregion
