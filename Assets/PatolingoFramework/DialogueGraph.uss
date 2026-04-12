@@ -1,0 +1,16 @@
+
+.node{
+	width: 100px
+}
+
+.line-node{
+	width: 400px
+}
+
+.branch-node{
+	width: 400px
+}
+
+.start-node{
+	width: 300px
+}
