@@ -14,7 +14,7 @@ public class AnswerField : MonoBehaviour
         answersPlacement.DestroyChildren();
     }
 
-    public void SetAnswers(QuestionLine[] answers)
+    public void SetAnswers(string[] answers)
     {
         answersPlacement.DestroyChildren();
 
@@ -24,7 +24,7 @@ public class AnswerField : MonoBehaviour
 
             TextMeshProUGUI tmpBtn = newButton.GetComponentInChildren<TextMeshProUGUI>();
 
-            tmpBtn.text = answers[i].questionLine.GetLocalizedString();
+            tmpBtn.text = answers[i];
 
             int index = i;
 

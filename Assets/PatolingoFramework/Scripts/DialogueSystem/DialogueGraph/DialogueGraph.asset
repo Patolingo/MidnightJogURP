@@ -14,53 +14,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueGraph
   serializedNodes: []
   nodes:
-  - rid: 8744085285302960223
-  - rid: 8744085285302960224
-  - rid: 8744085292495405056
-  - rid: 8744085292495405057
-  - rid: 8744085292495405058
-  - rid: 8744085292495405059
+  - rid: 8744085353995960393
+  - rid: 8744085353995960396
+  - rid: 8744085358878392403
+  - rid: 8744085358878392404
+  - rid: 8744085359715942490
+  - rid: 8744085359715942492
   edges:
-  - GUID: bcc91dcc-c89d-42b9-bab9-ad15ee2c319c
+  - GUID: 8e6d6785-c367-45ce-8c04-3358a2854347
     owner: {fileID: 11400000}
-    inputNodeGUID: e0fca6f8-164c-4af1-ba84-4eb92ee5375b
-    outputNodeGUID: 1d5def02-843f-4ba6-a569-89c2727e4318
+    inputNodeGUID: 43b86700-60bb-4abf-99ed-eda2467dcd8c
+    outputNodeGUID: bf351306-6b76-4097-ae09-cb3254d2eded
     inputFieldName: input
     outputFieldName: output
     inputPortIdentifier: 
     outputPortIdentifier: 
-  - GUID: b5b067cf-2712-4210-82d4-f282ca96f312
+  - GUID: d69e41a1-96db-457b-a338-26a55a809535
     owner: {fileID: 11400000}
-    inputNodeGUID: cc3641c2-edea-4031-b62a-83042dc9fb3a
-    outputNodeGUID: e0fca6f8-164c-4af1-ba84-4eb92ee5375b
+    inputNodeGUID: ca3f2a35-f515-4bb0-93a0-7062350fc052
+    outputNodeGUID: 43b86700-60bb-4abf-99ed-eda2467dcd8c
     inputFieldName: input
     outputFieldName: output
     inputPortIdentifier: 
-    outputPortIdentifier: 
-  - GUID: e727234f-8b96-4244-8c48-38d5920f20f7
+    outputPortIdentifier: output
+  - GUID: 8b9f4347-bb6f-4feb-b45c-a8ceb844a42e
     owner: {fileID: 11400000}
-    inputNodeGUID: 103fab58-6552-4233-985d-7b4e6965260e
-    outputNodeGUID: cc3641c2-edea-4031-b62a-83042dc9fb3a
-    inputFieldName: input
-    outputFieldName: choiceOutput
-    inputPortIdentifier: 
-    outputPortIdentifier: choice_0
-  - GUID: c74bd7a1-cec5-4f5e-b467-6e0c90dc69b4
-    owner: {fileID: 11400000}
-    inputNodeGUID: c5f3a160-42d2-4d2a-bc17-d5251c6ae8f8
-    outputNodeGUID: cc3641c2-edea-4031-b62a-83042dc9fb3a
+    inputNodeGUID: 965d7615-1fea-4d20-a36f-1e722f50f7c6
+    outputNodeGUID: ca3f2a35-f515-4bb0-93a0-7062350fc052
     inputFieldName: input
     outputFieldName: choiceOutput
     inputPortIdentifier: 
     outputPortIdentifier: choice_1
-  - GUID: 02a5de31-4bad-418b-8e61-fe326ea59927
+  - GUID: 47a6c1c8-c736-4b82-a7de-7904e9950d8d
     owner: {fileID: 11400000}
-    inputNodeGUID: 3ffd29c7-e54c-4efd-ac8d-3ac7f2efb837
-    outputNodeGUID: cc3641c2-edea-4031-b62a-83042dc9fb3a
+    inputNodeGUID: f9d28a0a-b5b4-496d-a2dc-f0add8d9085f
+    outputNodeGUID: ca3f2a35-f515-4bb0-93a0-7062350fc052
     inputFieldName: input
     outputFieldName: choiceOutput
     inputPortIdentifier: 
-    outputPortIdentifier: choice_2
+    outputPortIdentifier: choice_0
+  - GUID: 846edea9-45aa-48a6-8108-d19deea620d7
+    owner: {fileID: 11400000}
+    inputNodeGUID: bf01ad58-ddab-4805-a114-c1a1f52b7915
+    outputNodeGUID: f9d28a0a-b5b4-496d-a2dc-f0add8d9085f
+    inputFieldName: input
+    outputFieldName: output
+    inputPortIdentifier: 
+    outputPortIdentifier: output
   groups: []
   stackNodes: []
   pinnedElements: []
@@ -68,22 +68,22 @@ MonoBehaviour:
   serializedParameterList: []
   stickyNotes: []
   nodeInspectorReference: {fileID: 0}
-  position: {x: -890, y: 37, z: 0}
-  scale: {x: 1.15, y: 1.15, z: 1}
+  position: {x: -202, y: 245, z: 0}
+  scale: {x: 0.43232757, y: 0.43232757, z: 1}
   dialogueType: 0
   references:
     version: 2
     RefIds:
-    - rid: 8744085285302960223
+    - rid: 8744085353995960393
       type: {class: StartNode, ns: , asm: Assembly-CSharp}
       data:
         nodeCustomName: 
-        GUID: 1d5def02-843f-4ba6-a569-89c2727e4318
+        GUID: bf351306-6b76-4097-ae09-cb3254d2eded
         computeOrder: 0
         position:
           serializedVersion: 2
-          x: 73
-          y: 228
+          x: 283
+          y: 264
           width: 300
           height: 132
         expanded: 0
@@ -92,26 +92,27 @@ MonoBehaviour:
         OnEnterConversation:
           key: 
           content: 
-    - rid: 8744085285302960224
+    - rid: 8744085353995960396
       type: {class: LineNode, ns: , asm: Assembly-CSharp}
       data:
         nodeCustomName: 
-        GUID: e0fca6f8-164c-4af1-ba84-4eb92ee5375b
+        GUID: 43b86700-60bb-4abf-99ed-eda2467dcd8c
         computeOrder: 1
         position:
           serializedVersion: 2
-          x: 461
-          y: 184
-          width: 300
-          height: 485
-        expanded: 1
+          x: 746
+          y: 133
+          width: 400
+          height: 280
+        expanded: 0
         debug: 0
         nodeLock: 0
+        identificationString: 
         whoIsTalking:
           m_TableReference:
-            m_TableCollectionName: 
+            m_TableCollectionName: GUID:03131860f0d15054bb43abeeb455a8e3
           m_TableEntryReference:
-            m_KeyId: 0
+            m_KeyId: 28316729344
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -125,7 +126,7 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        delayToStart: 0
+        delayToStart: 3
         delayToEnd: 0
         OnEnterLine:
           key: 
@@ -133,23 +134,126 @@ MonoBehaviour:
         OnExitLine:
           key: 
           content: 
-    - rid: 8744085292495405056
-      type: {class: BranchNode, ns: , asm: Assembly-CSharp}
+        choiceContents: []
+        onSelectedCallbacks: []
+    - rid: 8744085358878392403
+      type: {class: LineNode, ns: , asm: Assembly-CSharp}
       data:
         nodeCustomName: 
-        GUID: cc3641c2-edea-4031-b62a-83042dc9fb3a
+        GUID: ca3f2a35-f515-4bb0-93a0-7062350fc052
         computeOrder: 2
         position:
           serializedVersion: 2
-          x: 923
-          y: 122.5
+          x: 1474.0435
+          y: 97.565216
           width: 400
-          height: 123
+          height: 396
         expanded: 0
         debug: 0
         nodeLock: 0
+        identificationString: 
+        whoIsTalking:
+          m_TableReference:
+            m_TableCollectionName: GUID:03131860f0d15054bb43abeeb455a8e3
+          m_TableEntryReference:
+            m_KeyId: 28316729344
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        content:
+          m_TableReference:
+            m_TableCollectionName: GUID:b12b9943fb00ac040a6a69baeaab0df5
+          m_TableEntryReference:
+            m_KeyId: 1291943084032
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        delayToStart: 0
+        delayToEnd: 3
+        OnEnterLine:
+          key: 
+          content: 
+        OnExitLine:
+          key: 
+          content: 
         choiceContents:
         - m_TableReference:
+            m_TableCollectionName: GUID:b12b9943fb00ac040a6a69baeaab0df5
+          m_TableEntryReference:
+            m_KeyId: 1715332907008
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        - m_TableReference:
+            m_TableCollectionName: GUID:b12b9943fb00ac040a6a69baeaab0df5
+          m_TableEntryReference:
+            m_KeyId: 1611016372224
+            m_Key: 
+          m_FallbackState: 0
+          m_WaitForCompletion: 0
+          m_LocalVariables: []
+        onSelectedCallbacks:
+        - key: 
+          content: 
+        - key: 
+          content: 
+    - rid: 8744085358878392404
+      type: {class: EndNode, ns: , asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 965d7615-1fea-4d20-a36f-1e722f50f7c6
+        computeOrder: 3
+        position:
+          serializedVersion: 2
+          x: 2101
+          y: 321
+          width: 100
+          height: 94
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        OnExitConversation:
+          key: 
+          content: 
+    - rid: 8744085359715942490
+      type: {class: EndNode, ns: , asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: bf01ad58-ddab-4805-a114-c1a1f52b7915
+        computeOrder: 5
+        position:
+          serializedVersion: 2
+          x: 2681.158
+          y: 11.485901
+          width: 100
+          height: 94
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        OnExitConversation:
+          key: 
+          content: 
+    - rid: 8744085359715942492
+      type: {class: LineNode, ns: , asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: f9d28a0a-b5b4-496d-a2dc-f0add8d9085f
+        computeOrder: 4
+        position:
+          serializedVersion: 2
+          x: 2047.3479
+          y: 21.260864
+          width: 400
+          height: 280
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        identificationString: 
+        whoIsTalking:
+          m_TableReference:
             m_TableCollectionName: GUID:03131860f0d15054bb43abeeb455a8e3
           m_TableEntryReference:
             m_KeyId: 6350382759936
@@ -157,51 +261,11 @@ MonoBehaviour:
           m_FallbackState: 0
           m_WaitForCompletion: 0
           m_LocalVariables: []
-        - m_TableReference:
-            m_TableCollectionName: 
-          m_TableEntryReference:
-            m_KeyId: 0
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        - m_TableReference:
-            m_TableCollectionName: 
-          m_TableEntryReference:
-            m_KeyId: 0
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-    - rid: 8744085292495405057
-      type: {class: LineNode, ns: , asm: Assembly-CSharp}
-      data:
-        nodeCustomName: 
-        GUID: 103fab58-6552-4233-985d-7b4e6965260e
-        computeOrder: 3
-        position:
-          serializedVersion: 2
-          x: 1439.3478
-          y: -90.999985
-          width: 400
-          height: 214
-        expanded: 0
-        debug: 0
-        nodeLock: 0
-        whoIsTalking:
-          m_TableReference:
-            m_TableCollectionName: 
-          m_TableEntryReference:
-            m_KeyId: 0
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
         content:
           m_TableReference:
-            m_TableCollectionName: 
+            m_TableCollectionName: GUID:03131860f0d15054bb43abeeb455a8e3
           m_TableEntryReference:
-            m_KeyId: 0
+            m_KeyId: 6350382759936
             m_Key: 
           m_FallbackState: 0
           m_WaitForCompletion: 0
@@ -214,60 +278,5 @@ MonoBehaviour:
         OnExitLine:
           key: 
           content: 
-    - rid: 8744085292495405058
-      type: {class: LineNode, ns: , asm: Assembly-CSharp}
-      data:
-        nodeCustomName: 
-        GUID: c5f3a160-42d2-4d2a-bc17-d5251c6ae8f8
-        computeOrder: 4
-        position:
-          serializedVersion: 2
-          x: 1439
-          y: 136.99997
-          width: 400
-          height: 214
-        expanded: 0
-        debug: 0
-        nodeLock: 0
-        whoIsTalking:
-          m_TableReference:
-            m_TableCollectionName: 
-          m_TableEntryReference:
-            m_KeyId: 0
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        content:
-          m_TableReference:
-            m_TableCollectionName: 
-          m_TableEntryReference:
-            m_KeyId: 0
-            m_Key: 
-          m_FallbackState: 0
-          m_WaitForCompletion: 0
-          m_LocalVariables: []
-        delayToStart: 0
-        delayToEnd: 0
-        OnEnterLine:
-          key: 
-          content: 
-        OnExitLine:
-          key: 
-          content: 
-    - rid: 8744085292495405059
-      type: {class: BranchNode, ns: , asm: Assembly-CSharp}
-      data:
-        nodeCustomName: 
-        GUID: 3ffd29c7-e54c-4efd-ac8d-3ac7f2efb837
-        computeOrder: 5
-        position:
-          serializedVersion: 2
-          x: 1439
-          y: 421
-          width: 400
-          height: 123
-        expanded: 0
-        debug: 0
-        nodeLock: 0
         choiceContents: []
+        onSelectedCallbacks: []

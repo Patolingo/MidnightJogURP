@@ -1,5 +1,8 @@
+using GraphProcessor;
 using System;
 using System.Collections;
+using TreeEditor;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DialogueManager : StaticInstance<DialogueManager>
@@ -7,16 +10,11 @@ public class DialogueManager : StaticInstance<DialogueManager>
     [SerializeField] private DialogueUI dialogueUI;
 
     private bool inputTriggered;
-
     private Coroutine conversationRoutine;
-
-    public string currentStep;
-
+    private DialogueGraphExecutor executor;
+    
     public event Action OnConversationEnded;
 
-    private QuestionLine[] currentQuestions;
-
-    private bool showingLine = false;
 
     private void Start()
     {
@@ -31,11 +29,7 @@ public class DialogueManager : StaticInstance<DialogueManager>
     public void StartConversation(ConversationData conversationData)
     {
         if (conversationRoutine != null)
-        {
-
             StopCoroutine(conversationRoutine);
-            
-        }
 
         conversationRoutine = StartCoroutine(EConversation(conversationData));
     }
@@ -44,102 +38,31 @@ public class DialogueManager : StaticInstance<DialogueManager>
     {
         if (conversationData == null) yield break;
 
-        if(conversationData.dialogueType == ConversationData.DialogueType.CONVERSATION)
+        if(conversationData.pausePlayerOnDialogue)
             PlayerController.instance.Block(this);
 
-        int conversationLength = conversationData.Length;
-        int currentIndex = 0;
+        executor = new DialogueGraphExecutor(conversationData.graph);
 
-        ConversationLine line = conversationData.GetLine(0);
-
-        bool runningConversation = true;
-        showingLine = false;
-
-        bool lineIsQuestion = line.answers.Length > 0;
-        bool displayingAnswes = false;
+        executor.Start();
 
         dialogueUI.ClearLine();
         dialogueUI.ClearAnswers();
-
-
         dialogueUI.SetDisplayVisible(true);
 
-        currentStep = "Initializing";
+        yield return new WaitForEndOfFrame();
 
-        while (runningConversation)
+        Debug.Log(executor.Graph);
+
+        while(executor.GetCurrent() != null)
         {
-            inputTriggered = false;
-            line = conversationData.GetLine(currentIndex);
-            lineIsQuestion = line.answers.Length > 0;
-            displayingAnswes = false;
-
-            yield return new WaitForSeconds(line.delayToStart);
-
-            dialogueUI.DisplayLine(line);
-
-            showingLine = true;
-
-            currentIndex++;
-
-            currentStep = "Showing Line";
-
-            yield return new WaitForSeconds(.16f);
-
-            while (showingLine)
-            {
-                currentStep = "Waiting Input";
-
-                //Skip
-                if (inputTriggered)
-                {
-                    if (dialogueUI.TryToSkip())
-                    {
-                        if (!lineIsQuestion)
-                        {
-                            showingLine = false;
-                        }
-                    }
-
-                    
-                    currentStep = "Line Kept";
-                    inputTriggered = false;
-                }
-
-
-                //Display Answers / Questions
-                if(dialogueUI.IsDialogueFullyDisplayed() && lineIsQuestion && conversationData.dialogueType != ConversationData.DialogueType.CONVERSATION)
-                {
-                    if (displayingAnswes == false)
-                    {
-                        currentQuestions = line.answers;
-
-                        PlayerController.instance.ChangeCursorVisible(true);
-                        dialogueUI.DisplayAnswers(line.answers);
-                        displayingAnswes = true;
-                    }
-                }
-                yield return null;
-            }
-            currentStep = "Advancing Conversation";
-
-            if (currentIndex >= conversationLength)
-            {
-                currentStep = "Conversation Ended";
-                runningConversation = false;
-            }
-
-            yield return new WaitForSeconds(line.delayToEnd);
-
-
-            yield return null;
+            Debug.Log("Running Node");
+            yield return ProcessNode(executor.GetCurrent());
         }
 
         dialogueUI.SetDisplayVisible(false);
         dialogueUI.ClearAnswers();
 
-        
-
-        if (conversationData.dialogueType == ConversationData.DialogueType.CONVERSATION)
+        if (conversationData.pausePlayerOnDialogue)
         {
             PlayerController.instance.ChangeCursorVisible(false);
             PlayerController.instance.Unblock(this);
@@ -148,19 +71,101 @@ public class DialogueManager : StaticInstance<DialogueManager>
         OnConversationEnded?.Invoke();
     }
 
+    private IEnumerator ProcessNode(BaseNode node)
+    {
+        if (node is LineNode lineNode)
+            yield return ProcessLineNode(lineNode);
+        else if (node is StartNode startNode)
+            yield return ProcessStartNode(startNode);
+        else if (node is EndNode endNode)
+            yield return ProcessEndNode(endNode);
+        else
+            executor.Advance();
+    }
+
+    private IEnumerator ProcessStartNode(StartNode startNode)
+    {
+        Debug.Log("Entered StartNode");
+
+        startNode.OnEnterConversation.Call();
+        executor.Advance();
+        yield break;
+    }
+    private IEnumerator ProcessEndNode(EndNode endNode)
+    {
+        Debug.Log("Entered EndNode");
+
+        endNode.OnExitConversation.Call();
+        executor.Advance();
+        yield break;
+    }
+    private IEnumerator ProcessLineNode(LineNode lineNode)
+    {
+        Debug.Log("Entered LineNode");
+
+        yield return new WaitForSeconds(lineNode.delayToStart);
+
+        lineNode.OnEnterLine.Call();
+
+        dialogueUI.DisplayLine(
+            lineNode.whoIsTalking.GetLocalizedString(),
+            lineNode.content.GetLocalizedString()
+        );
+
+        yield return new WaitForSeconds(0.16f);
+
+        if (lineNode.HasChoices)
+        {
+            PlayerController.instance.ChangeCursorVisible(true);
+            dialogueUI.DisplayAnswers(lineNode.GetAnswers());
+
+            int selectedIndex = -1;
+            dialogueUI.OnChoiceSelected = (i) => selectedIndex = i;
+            yield return new WaitUntil(() => selectedIndex >= 0);
+
+            lineNode.onSelectedCallbacks[selectedIndex].Call();
+            executor.AdvanceFromChoice(selectedIndex);
+
+            dialogueUI.ClearAnswers();
+
+        }
+        else
+        {
+            yield return WaitForInput();
+            dialogueUI.ClearLine();
+            executor.Advance();
+        }
+
+        lineNode.OnExitLine.Call();
+        yield return new WaitForSeconds(lineNode.delayToEnd);
+    }
+
+    private IEnumerator WaitForInput()
+    {
+        inputTriggered = false;
+        while (true)
+        {
+            yield return null;
+            if (!inputTriggered) continue;
+
+            Debug.Log("Skipping");
+
+            if (dialogueUI.TryToSkip())
+                break;
+
+            inputTriggered = false;
+        }
+    }
+
     public void DialogueInputTrigger()
     {
         inputTriggered = true;
     }
 
-
     public void SelectAnswer(int index)
     {
-        QuestionLine selectedAnswer = currentQuestions[index];
-
-        selectedAnswer.OnSelected.Call();
-
-        if (selectedAnswer.resultConversation != null) StartConversation(selectedAnswer.resultConversation);
-        else showingLine = false;
+        dialogueUI.OnChoiceSelected?.Invoke(index);
+        PlayerController.instance.ChangeCursorVisible(false);
     }
+
 }

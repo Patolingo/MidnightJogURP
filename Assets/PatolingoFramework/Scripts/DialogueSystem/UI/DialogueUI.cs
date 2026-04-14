@@ -1,26 +1,26 @@
+using System;
 using UnityEngine;
 
 public class DialogueUI : MonoBehaviour
 {
     [SerializeField] private DialogueField dialogueField;
     [SerializeField] private AnswerField answerField;
-    
+
+    public Action<int> OnChoiceSelected;
 
     public void SetDisplayVisible(bool visible)
     {
         dialogueField.SetVisible(visible);
     }
 
-    public void DisplayLine(ConversationLine line)
+    public void DisplayLine(string name, string line)
     {
-        string nameStr = line.whoIsTalking.GetLocalizedString();
-        string contentStr = line.content.GetLocalizedString();
-        
-        dialogueField.SetField(nameStr, contentStr);
+        dialogueField.SetField(name, line);
+        Debug.Log(line);
     }
 
 
-    public void DisplayAnswers(QuestionLine[] answerLines)
+    public void DisplayAnswers(string[] answerLines)
     {
         answerField.SetAnswers(answerLines);
     }

@@ -36,8 +36,12 @@ public class EndNode : BaseNode
 public class LineNode : BaseNode
 {
     [Input] public DialoguePort input;
+
     [Output] public DialoguePort output;
 
+    [Output, HideInInspector] public DialoguePort choiceOutput;
+
+    public string identificationString;
     public LocalizedString whoIsTalking;
     public LocalizedString content;
 
@@ -47,23 +51,27 @@ public class LineNode : BaseNode
     public Message OnEnterLine;
     public Message OnExitLine;
 
-    protected override void Process() { }
-}
-
-// QuestionLine virou um nó próprio
-// cada porta de saída é uma escolha
-[System.Serializable]
-[NodeMenuItem("Dialogue/Branch")]
-public class BranchNode : BaseNode
-{
-    [Input] public DialoguePort input;
-
-    // campo fantasma — só existe pra o sistema de ports ter um fieldInfo pra referenciar
-    [Output(name = "Choices")] public DialoguePort choiceOutput;
-
     [SerializeField] public List<LocalizedString> choiceContents = new List<LocalizedString>();
+    [SerializeField] public List<Message> onSelectedCallbacks = new List<Message>();
+
+    public bool HasChoices => choiceContents.Count > 0;
 
     protected override void Process() { }
+
+    [CustomPortBehavior(nameof(output))]
+    IEnumerable<PortData> GetOutputPort(List<SerializableEdge> edges)
+    {
+        // só mostra a saída simples se não tiver choices
+        if (!HasChoices)
+        {
+            yield return new PortData
+            {
+                displayName = "Out",
+                displayType = typeof(DialoguePort),
+                identifier = "output",
+            };
+        }
+    }
 
     [CustomPortBehavior(nameof(choiceOutput))]
     IEnumerable<PortData> GetChoicePorts(List<SerializableEdge> edges)
@@ -71,8 +79,6 @@ public class BranchNode : BaseNode
         for (int i = 0; i < choiceContents.Count; i++)
         {
             var key = choiceContents[i].TableEntryReference.Key;
-            Debug.Log($"Choice {i} key: '{key}'");
-
             yield return new PortData
             {
                 displayName = !string.IsNullOrEmpty(key) ? key : $"Choice {i}",
@@ -80,6 +86,18 @@ public class BranchNode : BaseNode
                 identifier = $"choice_{i}",
             };
         }
+    }
+    
+    public string[] GetAnswers()
+    {
+        string[] answers = new string[choiceContents.Count];
+
+        for (int i = 0; i < answers.Length; i++)
+        {
+            answers[i] = choiceContents[i].GetLocalizedString();
+        }
+
+        return answers;
     }
 }
 

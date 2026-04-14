@@ -22,60 +22,57 @@ public class StartNodeView : BaseNodeView
 [NodeCustomEditor(typeof(LineNode))]
 public class LineNodeView : BaseNodeView
 {
+    LineNode lineNode;
+    VisualElement choicesContainer;
+    SerializedObject serializedGraph; // mantém vivo aqui
+    bool isUpdating = false;
+
     public override void Enable()
     {
+        lineNode = nodeTarget as LineNode;
         AddToClassList("line-node");
 
         base.Enable();
-    }
-}
 
-[NodeCustomEditor(typeof(BranchNode))]
-public class BranchNodeView : BaseNodeView
-{
-    BranchNode branchNode;
+        serializedGraph = new SerializedObject(owner.graph); // cria uma vez
 
-    public override void Enable()
-    {
-        branchNode = nodeTarget as BranchNode;
-        AddToClassList("branch-node");
-
-        var addButton = new Button(() => AddChoice()) { text = "Add Choice" };
-        var removeButton = new Button(() => RemoveChoice()) { text = "Remove Choice" };
-
-        controlsContainer.Add(addButton);
-        controlsContainer.Add(removeButton);
+        choicesContainer = new VisualElement();
+        controlsContainer.Add(choicesContainer);
 
         owner.graph.onGraphChanges += OnGraphChanged;
-
         RebuildChoiceFields();
     }
 
     public override void Disable()
     {
         owner.graph.onGraphChanges -= OnGraphChanged;
+        serializedGraph?.Dispose();
     }
 
     void OnGraphChanged(GraphChanges changes)
     {
-        if (changes.nodeChanged == branchNode)
+        if (changes.nodeChanged == lineNode)
         {
-            branchNode.UpdateAllPorts();
-            RefreshPorts();
+            serializedGraph.Update(); // atualiza o objeto serializado
+            lineNode.UpdateAllPorts();
+            //RefreshPorts();
             RebuildChoiceFields();
         }
     }
 
     void RebuildChoiceFields()
     {
-        controlsContainer.Clear();
+        // desvincula todos os PropertyFields antes de limpar
+        choicesContainer.Unbind();
+        choicesContainer.Clear();
 
-        var serializedGraph = new SerializedObject(owner.graph);
-        var nodeIndex = owner.graph.nodes.IndexOf(branchNode);
+        serializedGraph = new SerializedObject(owner.graph);
+
+        var nodeIndex = owner.graph.nodes.IndexOf(lineNode);
         var nodeProp = serializedGraph.FindProperty("nodes").GetArrayElementAtIndex(nodeIndex);
-        var contentsProp = nodeProp.FindPropertyRelative(nameof(BranchNode.choiceContents));
+        var contentsProp = nodeProp.FindPropertyRelative(nameof(LineNode.choiceContents));
 
-        for (int i = 0; i < branchNode.choiceContents.Count; i++)
+        for (int i = 0; i < lineNode.choiceContents.Count; i++)
         {
             var contentField = new PropertyField(contentsProp.GetArrayElementAtIndex(i), $"Choice {i}");
             contentField.Bind(serializedGraph);
@@ -89,30 +86,46 @@ public class BranchNodeView : BaseNodeView
                 schedule.Execute(() => ForceUpdate()).StartingIn(0);
             });
 
-            controlsContainer.Add(contentField);
+            choicesContainer.Add(contentField);
         }
 
-        controlsContainer.Add(new Button(() => AddChoice()) { text = "Add Choice" });
-        controlsContainer.Add(new Button(() => RemoveChoice()) { text = "Remove Choice" });
+        choicesContainer.Add(new Button(() => AddChoice()) { text = "Add Choice" });
+
+        if (lineNode.choiceContents.Count > 0)
+            choicesContainer.Add(new Button(() => RemoveChoice()) { text = "Remove Choice" });
     }
 
     void AddChoice()
     {
-        branchNode.choiceContents.Add(new LocalizedString());
+        lineNode.choiceContents.Add(new LocalizedString());
+        lineNode.onSelectedCallbacks.Add(Message.Empty);
         schedule.Execute(() => ForceUpdate()).StartingIn(0);
     }
 
     void RemoveChoice()
     {
-        if (branchNode.choiceContents.Count == 0) return;
-        int last = branchNode.choiceContents.Count - 1;
-        branchNode.choiceContents.RemoveAt(last);
+        if (lineNode.choiceContents.Count == 0) return;
+
+        // desvincula imediatamente antes de modificar a lista
+        choicesContainer.Unbind();
+        choicesContainer.Clear();
+
+        int last = lineNode.choiceContents.Count - 1;
+        lineNode.choiceContents.RemoveAt(last);
+        lineNode.onSelectedCallbacks.RemoveAt(last);
         schedule.Execute(() => ForceUpdate()).StartingIn(0);
     }
 
+
+
     void ForceUpdate()
     {
+        if (isUpdating) return;
+        isUpdating = true;
+
         EditorUtility.SetDirty(owner.graph);
-        owner.graph.NotifyNodeChanged(branchNode);
+        owner.graph.NotifyNodeChanged(lineNode);
+
+        isUpdating = false;
     }
 }
