@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ConversationData
   m_EditorClassIdentifier: Assembly-CSharp::ConversationData
   graph: {fileID: 11400000, guid: 0b2b181aa734ef84191915cd9e17d288, type: 2}
-  pausePlayerOnDialogue: 0
+  pausePlayerOnDialogue: 1
